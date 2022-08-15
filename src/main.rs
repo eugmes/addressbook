@@ -16,7 +16,7 @@ use address_entry::{AddressEntry, AddressEntryPatch};
 use database::Database;
 use json_with_id::JsonWithId;
 
-type SharedAddressData = RwLock<Database<AddressEntry, AddressEntryPatch>>;
+type SharedAddressData = RwLock<Database<AddressEntry>>;
 
 #[get("/")]
 fn contacts(db: &State<SharedAddressData>) -> Value {

@@ -1,22 +1,20 @@
-use std::{collections::HashMap, marker};
+use std::collections::HashMap;
 
 use patchable::Patchable;
 use serde_json::Value;
 
 use crate::json_with_id::JsonWithId;
 
-pub struct Database<Entry, EntryPatch> {
+pub struct Database<Entry> {
     next_id: i64,
     data: HashMap<i64, Entry>,
-    _marker: marker::PhantomData<EntryPatch>,
 }
 
-impl<Entry: JsonWithId<i64> + Patchable<EntryPatch>, EntryPatch> Database<Entry, EntryPatch> {
+impl<Entry: JsonWithId<i64>> Database<Entry> {
     pub fn new() -> Self {
         Self {
             next_id: 0,
             data: HashMap::new(),
-            _marker: marker::PhantomData,
         }
     }
 
@@ -51,7 +49,10 @@ impl<Entry: JsonWithId<i64> + Patchable<EntryPatch>, EntryPatch> Database<Entry,
         })
     }
 
-    pub fn update(&mut self, id: &i64, patch: EntryPatch) -> Option<&Entry> {
+    pub fn update<Patch>(&mut self, id: &i64, patch: Patch) -> Option<&Entry>
+    where
+        Entry: Patchable<Patch>,
+    {
         self.data.get_mut(id).map(|ent| -> &Entry {
             ent.apply_patch(patch);
             ent
