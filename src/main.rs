@@ -52,7 +52,7 @@ fn replace_contact(
 ) -> Option<Value> {
     db.write()
         .unwrap()
-        .replace(&id, new_entry.0.clone())
+        .replace(&id, new_entry.0)
         .map(|ent| ent.as_value(&id))
 }
 
